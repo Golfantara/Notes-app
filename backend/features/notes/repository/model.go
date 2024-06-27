@@ -75,3 +75,16 @@ func (mdl *model) DeleteByID(notesID int) int64 {
 
 	return result.RowsAffected
 }
+
+func (mdl *model) GetTotalDataNotes() int64 {
+	var totalData int64
+
+	result := mdl.db.Table("notes").Where("deleted_at IS NULL").Count(&totalData)
+
+	if result.Error != nil {
+		log.Error(result.Error)
+		return 0
+	}
+
+	return totalData
+}

@@ -1,25 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/auth/main.dart';
 import 'package:mobile/auth/register.dart';
+import 'package:mobile/model/model_signin.dart';
+import 'package:mobile/notes/main.dart';
+import 'package:mobile/services/services_signin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dio/dio.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
   @override
-// ignore: library_private_types_in_public_api
+  // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController username = TextEditingController();
   final TextEditingController password = TextEditingController();
+
   bool isButtonDisabled = true;
   bool isLoading = false;
+
+  final SignInService _signInService = SignInService();
+
   @override
   void initState() {
     super.initState();
     username.addListener(validateInput);
     password.addListener(validateInput);
+  }
+
+  void setAccessToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('accessToken', token);
   }
 
   void validateInput() {
@@ -29,47 +42,32 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void login() async {
-    try {
-      setState(() {
-        isLoading = true;
-      });
-      final response = await Dio().post(
-        'http://localhost:8000/auth/login',
-        data: {
-          'username': username.text,
-          'password': password.text,
-        },
+  Future<void> signIn() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    ModelSignIn? signInResponse = await _signInService.signInAccount(
+      username: username.text,
+      password: password.text,
+    );
+
+    if (signInResponse != null) {
+      setAccessToken(signInResponse.data.accessToken);
+      Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MainScreen(),
+        ),
       );
-      print(response.data);
-      if (response.statusCode == 200) {
-        String? accesToken = response.data['acces_token'];
-        if (accesToken != null) {
-          setAccessToken(accesToken);
-        }
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Success'),
-              content: const Text(
-                'Login berhasil',
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } catch (e) {
-      print(e);
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+
       showDialog(
+        // ignore: use_build_context_synchronously
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -88,16 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         },
       );
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
     }
-  }
-
-  void setAccessToken(String token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('accesToken', token);
   }
 
   @override
@@ -105,13 +94,22 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Masuk Akun'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AuthScreen()),
+            );
+          },
+        ),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Masuk Notes App',
+              'Masuk Tour App',
               style: TextStyle(
                 fontSize: 30,
                 color: Colors.black,
@@ -145,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
             FractionallySizedBox(
               widthFactor: 0.7,
               child: OutlinedButton(
-                onPressed: isButtonDisabled || isLoading ? null : login,
+                onPressed: isButtonDisabled || isLoading ? null : signIn,
                 style: OutlinedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -196,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const RegistrationScreen()),
+                            builder: (context) => const RegisterScreen()),
                       );
                     },
                     child: const Text(

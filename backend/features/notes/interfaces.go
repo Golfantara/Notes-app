@@ -7,6 +7,7 @@ import (
 )
 
 type Repository interface {
+	GetTotalDataNotes() int64
 	Paginate(userID, page, size int) []Notes
 	Insert(newNotes Notes) (*Notes, error)
 	SelectByID(notesID int) *Notes
@@ -15,7 +16,7 @@ type Repository interface {
 }
 
 type Usecase interface {
-	FindAll(userID, page, size int) []dtos.ResNotes
+	FindAll(userID, page, size int) ([]dtos.ResNotes, int64)
 	FindByID(notesID int) *dtos.ResNotes
 	Create(newNotes dtos.InputNotes, UserID int) *dtos.ResNotes
 	Modify(notesData dtos.InputNotes, notesID int) bool

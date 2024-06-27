@@ -34,7 +34,7 @@ func (ctl *controller) GetNotess() echo.HandlerFunc {
 		}
 		
 
-		if pagination.Page  <= 0 || pagination.Size <= 0 {
+		if pagination.Page  <= 1 || pagination.Size <= 1 {
 			pagination.Page = 1
 			pagination.Size = 5
 		}
@@ -42,14 +42,17 @@ func (ctl *controller) GetNotess() echo.HandlerFunc {
 		page := pagination.Page
 		size := pagination.Size
 
-		notess := ctl.service.FindAll(UserID, page, size)
+		notess, totalData := ctl.service.FindAll(UserID, page, size)
 
-		if notess == nil {
+		if len(notess) == 0 {
 			return ctx.JSON(404, helper.Response("There is No Notess!"))
 		}
 
+		paginationResponse := helpers.PaginationResponse(page, size, int(totalData))
+
 		return ctx.JSON(200, helper.Response("Success!", map[string]any {
 			"data": notess,
+			"pagination": paginationResponse,
 		}))
 	}
 }

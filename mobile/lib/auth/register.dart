@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/auth/login.dart';
-import 'package:dio/dio.dart';
+import 'package:mobile/auth/main.dart';
+import 'package:mobile/model/model_signup.dart';
+import 'package:mobile/services/services_signup.dart';
 
-class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  _RegistrationScreenState createState() => _RegistrationScreenState();
+  // ignore: library_private_types_in_public_api
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController username = TextEditingController();
   final TextEditingController fullname = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController cpassword = TextEditingController();
+
   bool isLoading = false;
   bool isButtonDisabled = true;
+
+  final SignUpService _signUpService = SignUpService();
 
   @override
   void initState() {
@@ -36,67 +42,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
   }
 
-  void registerUser() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      final response =
-          await Dio().post('http://localhost:8000/auth/register', data: {
-        'username': username.text,
-        'fullname': fullname.text,
-        'password': password.text,
-      });
-      if (response.statusCode == 200) {
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LoginScreen(),
-            ),
-          );
-        }
-      }
-      // Handle response
-    } catch (error) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Registration Error"),
-              content: const Text("An error occurred during registration."),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("OK"),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notes App'),
+        title: const Text('Daftar Akun'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AuthScreen()),
+            );
+          },
+        ),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Daftar Notes App',
+              'Daftar Tour App',
               style: TextStyle(
                 fontSize: 30,
                 color: Colors.black,
@@ -153,7 +119,52 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             FractionallySizedBox(
               widthFactor: 0.7,
               child: ElevatedButton(
-                onPressed: isButtonDisabled || isLoading ? null : registerUser,
+                onPressed: isButtonDisabled || isLoading
+                    ? null
+                    : () async {
+                        setState(() {
+                          isLoading = true;
+                        });
+
+                        ModelSignUp? signUpResponse =
+                            await _signUpService.signUpAccount(
+                          username.text,
+                          fullname.text,
+                          password.text,
+                        );
+
+                        if (signUpResponse != null) {
+                          Navigator.pushReplacement(
+                            // ignore: use_build_context_synchronously
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
+                          );
+                        } else {
+                          setState(() {
+                            isLoading = false;
+                          });
+
+                          showDialog(
+                              // ignore: use_build_context_synchronously
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                    title: const Text('Error'),
+                                    content: const Text(
+                                      'Terjadi kesalahan saat melakukan daftar',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          child: const Text('OK'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          })
+                                    ]);
+                              });
+                        }
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
@@ -165,13 +176,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         padding:
                             EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                         child: SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3,
-                            color: Colors.black87,
-                          ),
-                        ),
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              color: Colors.black87,
+                            )),
                       )
                     : const Padding(
                         padding:
@@ -203,8 +213,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
+                            builder: (context) => const LoginScreen()),
                       );
                     },
                     child: const Text(

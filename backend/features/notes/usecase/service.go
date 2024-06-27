@@ -18,7 +18,7 @@ func New(model notes.Repository) notes.Usecase {
 	}
 }
 
-func (svc *service) FindAll(userID, page, size int) []dtos.ResNotes {
+func (svc *service) FindAll(userID, page, size int) ([]dtos.ResNotes, int64) {
 	var notess []dtos.ResNotes
 
 	notessEnt := svc.model.Paginate(userID, page, size)
@@ -33,7 +33,9 @@ func (svc *service) FindAll(userID, page, size int) []dtos.ResNotes {
 		notess = append(notess, data)
 	}
 
-	return notess
+	var totalData int64 = 0
+	totalData = svc.model.GetTotalDataNotes()
+	return notess, totalData
 }
 
 func (svc *service) FindByID(notesID int) *dtos.ResNotes {
