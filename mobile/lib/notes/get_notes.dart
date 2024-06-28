@@ -38,7 +38,6 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
       accessToken = prefs.getString('accessToken') ?? '';
     });
 
-    // Fetch profile only if accessToken is available
     if (accessToken != null && accessToken!.isNotEmpty) {
       _fetchProfile(accessToken!);
     }
@@ -50,7 +49,7 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
       await _notesService.deleteNote(id, prefs.getString('accessToken')!);
       _pagingController.refresh();
     } catch (error) {
-      print('Terjadi kesalahan saat melakukan permintaan: $error');
+      print('Error during request: $error');
     }
   }
 
@@ -67,16 +66,21 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title:
-            Text('Catatan, $profile!', style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        title: Text(
+          'Hello, $profile!',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
       ),
       body: Column(
         children: [
-          Center(
-            heightFactor: 2,
-            child: FractionallySizedBox(
-              widthFactor: 0.75,
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Center(
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(
@@ -86,7 +90,7 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  backgroundColor: Colors.blueAccent,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -94,20 +98,22 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   child: Text(
-                    'Buat Catatan',
-                    style: TextStyle(color: Colors.white),
+                    'Create Note',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               ),
             ),
           ),
-          const FractionallySizedBox(
-            widthFactor: 0.75,
-            child: Text('Daftar Catatan',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Color.fromARGB(255, 67, 57, 57))),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Your Notes',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
           const SizedBox(height: 10),
           Expanded(
@@ -118,131 +124,91 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
                 builderDelegate: PagedChildBuilderDelegate<dynamic>(
                   itemBuilder: (context, item, index) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: FractionallySizedBox(
-                        widthFactor: 0.75,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Colors.grey[300]!,
-                            ),
-                          ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        elevation: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const Text('Nama'),
-                                        const SizedBox(width: 75),
-                                        const Text(':'),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: Text(
-                                            item['name'],
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Row(children: [
-                                      const Text('Deskripsi'),
-                                      const SizedBox(width: 63),
-                                      const Text(':'),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                          child: Text(
-                                        item['description'],
-                                        overflow: TextOverflow.ellipsis,
-                                      )),
-                                    ]),
-                                  ],
+                              Text(
+                                item['name'],
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                item['description'],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
                               ),
                               const SizedBox(height: 10),
-                              FractionallySizedBox(
-                                widthFactor: 0.8,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => UpdateNoteScreen(
-                                          noteId: item['id'],
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UpdateNoteScreen(
+                                                  noteId: item['id']),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black87,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 40, vertical: 12),
+                                      );
+                                    },
                                     child: Text(
                                       'Edit',
-                                      style: TextStyle(color: Colors.white),
+                                      style:
+                                          TextStyle(color: Colors.blueAccent),
                                     ),
                                   ),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              FractionallySizedBox(
-                                widthFactor: 0.8,
-                                child: OutlinedButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: const Text('Konfirmasi'),
-                                          content: const Text(
-                                              'Apakah Anda yakin ingin menghapus catatan ini?'),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('Batal'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                                deleteNote(item['id']);
-                                              },
-                                              child: const Text('Hapus'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    side: BorderSide(
-                                        color: Colors.redAccent[400]!),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 36, vertical: 12),
+                                  TextButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text('Confirmation'),
+                                            content: const Text(
+                                                'Are you sure you want to delete this note?'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  deleteNote(item['id']);
+                                                },
+                                                child: const Text('Delete'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
                                     child: Text(
-                                      'Hapus',
-                                      style: TextStyle(
-                                          color: Colors.redAccent[400]),
+                                      'Delete',
+                                      style: TextStyle(color: Colors.redAccent),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
-                              const SizedBox(height: 20)
                             ],
                           ),
                         ),

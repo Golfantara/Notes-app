@@ -79,9 +79,15 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title:
-            const Text('Buat Catatan', style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        title: const Text(
+          'Create Note',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -89,15 +95,33 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Nama',
+              decoration: InputDecoration(
+                labelText: 'Name',
+                labelStyle: TextStyle(color: Colors.blueAccent),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
               ),
             ),
             const SizedBox(height: 10),
             TextField(
               controller: descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Deskripsi',
+              decoration: InputDecoration(
+                labelText: 'Description',
+                labelStyle: TextStyle(color: Colors.blueAccent),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
               ),
               maxLines: 5,
             ),
@@ -105,7 +129,7 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
             ElevatedButton(
               onPressed: isValid ? _createNote : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: isValid ? Colors.black : Colors.grey,
+                backgroundColor: isValid ? Colors.blueAccent : Colors.grey,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -115,8 +139,10 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
                     const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Simpan',
-                        style: TextStyle(color: Colors.white)),
+                    : const Text(
+                        'Save',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
               ),
             ),
           ],

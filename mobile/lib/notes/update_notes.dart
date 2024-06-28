@@ -14,8 +14,8 @@ class UpdateNoteScreen extends StatefulWidget {
 }
 
 class _UpdateNoteScreenState extends State<UpdateNoteScreen> {
-  TextEditingController name = TextEditingController();
-  TextEditingController description = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
   final NotesService _notesService = NotesService();
   String? accessToken;
   bool isValid = false;
@@ -26,6 +26,8 @@ class _UpdateNoteScreenState extends State<UpdateNoteScreen> {
     super.initState();
     _loadAccessToken();
     _getNoteById();
+    nameController.addListener(_validateInputs);
+    descriptionController.addListener(_validateInputs);
   }
 
   void _loadAccessToken() async {
@@ -37,7 +39,8 @@ class _UpdateNoteScreenState extends State<UpdateNoteScreen> {
 
   void _validateInputs() {
     setState(() {
-      isValid = name.text.isNotEmpty && description.text.isNotEmpty;
+      isValid = nameController.text.isNotEmpty &&
+          descriptionController.text.isNotEmpty;
     });
   }
 
@@ -61,6 +64,10 @@ class _UpdateNoteScreenState extends State<UpdateNoteScreen> {
       prefs.getString('accessToken')!,
     );
 
+    setState(() {
+      isLoading = false;
+    });
+
     if (data != null) {
       Navigator.push(
         context,
@@ -68,15 +75,9 @@ class _UpdateNoteScreenState extends State<UpdateNoteScreen> {
           builder: (context) => const GetNoteScreen(),
         ),
       );
-
-      setState(() {
-        isLoading = false;
-      });
+      nameController.clear();
+      descriptionController.clear();
     }
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   Future<void> _getNoteById() async {
@@ -86,88 +87,126 @@ class _UpdateNoteScreenState extends State<UpdateNoteScreen> {
         widget.noteId, prefs.getString('accessToken')!);
     if (data != null) {
       setState(() {
-        name = TextEditingController(text: data['data']['name']);
-        description = TextEditingController(text: data['data']['description']);
+        nameController = TextEditingController(text: data['data']['name']);
+        descriptionController =
+            TextEditingController(text: data['data']['description']);
       });
     }
     _validateInputs();
   }
 
   @override
+  void dispose() {
+    nameController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text('Edit Notes', style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        title: const Text(
+          'Edit Note',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              FractionallySizedBox(
-                widthFactor: 0.7,
-                child: TextField(
-                  controller: name,
-                  onChanged: (_) => _validateInputs(),
-                  decoration: const InputDecoration(
-                    labelText: 'Masukan nama catatan',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              FractionallySizedBox(
-                widthFactor: 0.7,
-                child: TextField(
-                  controller: description,
-                  onChanged: (_) => _validateInputs(),
-                  decoration: const InputDecoration(
-                    labelText: 'Masukan deskripsi',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              FractionallySizedBox(
-                widthFactor: 0.7,
-                child: ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : isValid
-                          ? () async {
-                              _updateNote(
-                                name.text,
-                                description.text,
-                              );
-                            }
-                          : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Center(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                FractionallySizedBox(
+                  widthFactor: 0.9,
+                  child: TextField(
+                    controller: nameController,
+                    onChanged: (_) => _validateInputs(),
+                    decoration: InputDecoration(
+                      labelText: 'Note Name',
+                      labelStyle: TextStyle(color: Colors.blueAccent),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                      ),
                     ),
                   ),
-                  child: isLoading
-                      ? const Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 36, vertical: 12),
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child:
-                                CircularProgressIndicator(color: Colors.white),
-                          ))
-                      : const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          child: Text(
-                            'Simpan perubahan data',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
                 ),
-              ),
-              const SizedBox(height: 20)
-            ],
+                const SizedBox(height: 10),
+                FractionallySizedBox(
+                  widthFactor: 0.9,
+                  child: TextField(
+                    controller: descriptionController,
+                    onChanged: (_) => _validateInputs(),
+                    decoration: InputDecoration(
+                      labelText: 'Note Description',
+                      labelStyle: TextStyle(color: Colors.blueAccent),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                      ),
+                    ),
+                    maxLines: 5,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                FractionallySizedBox(
+                  widthFactor: 0.9,
+                  child: ElevatedButton(
+                    onPressed: isLoading
+                        ? null
+                        : isValid
+                            ? () async {
+                                _updateNote(
+                                  nameController.text,
+                                  descriptionController.text,
+                                );
+                              }
+                            : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          isValid ? Colors.blueAccent : Colors.grey,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: isLoading
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 36, vertical: 12),
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                  color: Colors.white),
+                            ),
+                          )
+                        : const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 14),
+                            child: Text(
+                              'Save Changes',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
