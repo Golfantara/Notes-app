@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/auth/main.dart';
 import 'package:mobile/auth/register.dart';
 import 'package:mobile/model/model_signin.dart';
-import 'package:mobile/notes/main.dart';
+import 'package:mobile/notes/get_notes.dart';
 import 'package:mobile/services/services_signin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(
-          builder: (context) => const MainScreen(),
+          builder: (context) => const GetNoteScreen(),
         ),
       );
     } else {
@@ -109,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Masuk Tour App',
+              'Masuk Notes App',
               style: TextStyle(
                 fontSize: 30,
                 color: Colors.black,

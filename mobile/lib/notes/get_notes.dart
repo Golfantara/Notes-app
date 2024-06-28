@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/notes/create_notes.dart';
 import 'package:mobile/notes/update_notes.dart';
+import 'package:mobile/services/services_get_profile.dart';
 import 'package:mobile/services/services_notes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
@@ -17,6 +18,10 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
   final PagingController<int, dynamic> _pagingController =
       PagingController(firstPageKey: 1);
   final NotesService _notesService = NotesService();
+  final ProfileService _profileService = ProfileService();
+
+  String? accessToken;
+  String? profile;
 
   @override
   void initState() {
@@ -24,6 +29,19 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
       _fetchPage(pageKey);
     });
     super.initState();
+    _loadAccessToken();
+  }
+
+  void _loadAccessToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      accessToken = prefs.getString('accessToken') ?? '';
+    });
+
+    // Fetch profile only if accessToken is available
+    if (accessToken != null && accessToken!.isNotEmpty) {
+      _fetchProfile(accessToken!);
+    }
   }
 
   void deleteNote(dynamic id) async {
@@ -36,11 +54,22 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
     }
   }
 
+  Future<void> _fetchProfile(String accessToken) async {
+    final data = await _profileService.getProfile(accessToken);
+
+    if (data != null) {
+      setState(() {
+        profile = data['data']['fullname'];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Catatan', style: TextStyle(color: Colors.black)),
+        title:
+            Text('Catatan, $profile!', style: TextStyle(color: Colors.black)),
       ),
       body: Column(
         children: [

@@ -62,7 +62,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Daftar Tour App',
+              'Daftar Notes App',
               style: TextStyle(
                 fontSize: 30,
                 color: Colors.black,
