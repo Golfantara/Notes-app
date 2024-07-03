@@ -19,7 +19,7 @@ class SplashScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Image.network(
-                    'https://plus.unsplash.com/premium_photo-1717916843908-7bbee16bad20?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                    'https://i.pinimg.com/564x/f3/a2/ad/f3a2ad2ed7cbaa283090fe23a112d88d.jpg',
                     width: 150,
                     height: 150,
                   ),

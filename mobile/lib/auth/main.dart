@@ -12,7 +12,7 @@ class AuthScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/download.png', width: 150, height: 150),
+            Image.asset('assets/document.jpeg', width: 150, height: 150),
             const SizedBox(height: 30),
             const Text(
               'Selamat Datang di Aplikasi Tour App',

@@ -71,16 +71,18 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Error'),
+            backgroundColor: Colors.grey[850],
+            title: const Text('Error', style: TextStyle(color: Colors.white)),
             content: const Text(
               'Terjadi kesalahan saat melakukan login',
+              style: TextStyle(color: Colors.white),
             ),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('OK'),
+                child: const Text('OK', style: TextStyle(color: Colors.white)),
               ),
             ],
           );
@@ -92,10 +94,12 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Masuk Akun'),
+        title: const Text('Masuk Akun', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.grey[900],
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.push(
               context,
@@ -112,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
               'Masuk Notes App',
               style: TextStyle(
                 fontSize: 30,
-                color: Colors.black,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -121,9 +125,21 @@ class _LoginScreenState extends State<LoginScreen> {
               widthFactor: 0.7,
               child: TextField(
                 controller: username,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: 'Username',
-                  border: OutlineInputBorder(),
+                  labelStyle: const TextStyle(color: Colors.white),
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.blueAccent),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
@@ -132,9 +148,21 @@ class _LoginScreenState extends State<LoginScreen> {
               widthFactor: 0.7,
               child: TextField(
                 controller: password,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: 'Password',
-                  border: OutlineInputBorder(),
+                  labelStyle: const TextStyle(color: Colors.white),
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.blueAccent),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 obscureText: true,
               ),
@@ -150,8 +178,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   side: BorderSide(
                     color: isButtonDisabled || isLoading
-                        ? Colors.black12
-                        : Colors.black,
+                        ? Colors.white12
+                        : Colors.white,
                   ),
                 ),
                 child: isLoading
@@ -161,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(color: Colors.black),
+                          child: CircularProgressIndicator(color: Colors.white),
                         ))
                     : Padding(
                         padding: const EdgeInsets.symmetric(
@@ -170,37 +198,32 @@ class _LoginScreenState extends State<LoginScreen> {
                           'Masuk',
                           style: TextStyle(
                               color: isButtonDisabled
-                                  ? Colors.black12
-                                  : Colors.black),
+                                  ? Colors.white12
+                                  : Colors.white),
                         ),
                       ),
               ),
             ),
             const SizedBox(height: 10),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.15),
-                  child: const Text(
-                    'Belum punya akun ?',
-                    style: TextStyle(fontSize: 15),
-                  ),
+                const Text(
+                  'Belum punya akun ?',
+                  style: TextStyle(fontSize: 15, color: Colors.white),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RegisterScreen()),
-                      );
-                    },
-                    child: const Text(
-                      'Daftar',
-                      style: TextStyle(color: Colors.black, fontSize: 15),
-                    ),
+                const SizedBox(width: 5),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const RegisterScreen()),
+                    );
+                  },
+                  child: const Text(
+                    'Daftar',
+                    style: TextStyle(color: Colors.blueAccent, fontSize: 15),
                   ),
                 ),
               ],

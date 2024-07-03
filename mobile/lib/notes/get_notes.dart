@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/notes/create_notes.dart';
+import 'package:mobile/notes/profile.dart';
 import 'package:mobile/notes/update_notes.dart';
 import 'package:mobile/services/services_get_profile.dart';
 import 'package:mobile/services/services_notes.dart';
@@ -66,15 +67,59 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey[900],
         elevation: 1,
-        title: Text(
-          'Hello, $profile!',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
+        title: const Text('Explore', style: TextStyle(color: Colors.white)),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const GetProfileScreen(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.person, color: Colors.white),
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout_outlined, color: Colors.white),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    backgroundColor: Colors.grey[850],
+                    title: const Text("Confirm Logout",
+                        style: TextStyle(color: Colors.white)),
+                    content: const Text("Are you sure you want to log out?",
+                        style: TextStyle(color: Colors.white)),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('No',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
+                        },
+                        child: const Text('Yes',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -111,7 +156,10 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'Your Notes',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
             ),
           ),
@@ -127,6 +175,7 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
                       child: Card(
+                        color: Colors.grey[850],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -138,9 +187,10 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
                             children: [
                               Text(
                                 item['name'],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -149,7 +199,7 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
                                 item['description'],
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.grey[600],
+                                  color: Colors.grey[400],
                                 ),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
@@ -168,7 +218,7 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
                                         ),
                                       );
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       'Edit',
                                       style:
                                           TextStyle(color: Colors.blueAccent),
@@ -180,29 +230,39 @@ class _GetNoteScreenState extends State<GetNoteScreen> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Confirmation'),
+                                            backgroundColor: Colors.grey[850],
+                                            title: const Text('Confirmation',
+                                                style: TextStyle(
+                                                    color: Colors.white)),
                                             content: const Text(
-                                                'Are you sure you want to delete this note?'),
+                                                'Are you sure you want to delete this note?',
+                                                style: TextStyle(
+                                                    color: Colors.white)),
                                             actions: <Widget>[
                                               TextButton(
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                 },
-                                                child: const Text('Cancel'),
+                                                child: const Text('Cancel',
+                                                    style: TextStyle(
+                                                        color: Colors.white)),
                                               ),
                                               TextButton(
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                   deleteNote(item['id']);
                                                 },
-                                                child: const Text('Delete'),
+                                                child: const Text('Delete',
+                                                    style: TextStyle(
+                                                        color:
+                                                            Colors.redAccent)),
                                               ),
                                             ],
                                           );
                                         },
                                       );
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       'Delete',
                                       style: TextStyle(color: Colors.redAccent),
                                     ),

@@ -69,15 +69,38 @@ class _UpdateNoteScreenState extends State<UpdateNoteScreen> {
     });
 
     if (data != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const GetNoteScreen(),
-        ),
-      );
+      _showSuccessDialog();
       nameController.clear();
       descriptionController.clear();
     }
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.grey[850],
+          title: const Text('Success', style: TextStyle(color: Colors.white)),
+          content: const Text('Note successfully updated.',
+              style: TextStyle(color: Colors.white)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GetNoteScreen(),
+                  ),
+                );
+              },
+              child: const Text('OK', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _getNoteById() async {
@@ -105,13 +128,13 @@ class _UpdateNoteScreenState extends State<UpdateNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey[900],
         elevation: 1,
         title: const Text(
           'Edit Note',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -127,16 +150,17 @@ class _UpdateNoteScreenState extends State<UpdateNoteScreen> {
                   child: TextField(
                     controller: nameController,
                     onChanged: (_) => _validateInputs(),
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: 'Note Name',
-                      labelStyle: TextStyle(color: Colors.blueAccent),
+                      labelStyle: const TextStyle(color: Colors.blueAccent),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderSide: const BorderSide(color: Colors.blueAccent),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderSide: const BorderSide(color: Colors.blueAccent),
                       ),
                     ),
                   ),
@@ -147,16 +171,17 @@ class _UpdateNoteScreenState extends State<UpdateNoteScreen> {
                   child: TextField(
                     controller: descriptionController,
                     onChanged: (_) => _validateInputs(),
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: 'Note Description',
-                      labelStyle: TextStyle(color: Colors.blueAccent),
+                      labelStyle: const TextStyle(color: Colors.blueAccent),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderSide: const BorderSide(color: Colors.blueAccent),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderSide: const BorderSide(color: Colors.blueAccent),
                       ),
                     ),
                     maxLines: 5,
